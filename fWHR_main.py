@@ -16,8 +16,10 @@ def calculate(w_sheet, r_sheet, r, image_map):
     is_cm = r_sheet.cell(row=r + 1, column=11).value
     ratio = r_sheet.cell(row=r + 1, column=10).value
 
-    if ratio:
-        return
+    # if is_cm == 'y':
+    #     w_sheet.cell(row=r + 1, column=10).value = ''
+    #     w_sheet.cell(row=r + 1, column=11).value = ''
+    #     return
 
     print(r)
 
@@ -261,11 +263,11 @@ def upate_excel(filename):
             executor.submit(calculate, w_sheet, r_sheet, r, image_map)
 
     # calculate(w_sheet, r_sheet, 39, image_map)
-    w_book.save('/home/wly/python_item/sample_out_up_up.xlsx')
+    w_book.save('/home/wly/python_item/sample_out_up.xlsx')
 
 
 if __name__ == '__main__':
-    upate_excel('/home/wly/python_item/sample_out_up.xlsx')
+    upate_excel('/home/wly/python_item/sample_out.xlsx')
 #     check('/media/wly/My Passport/youyi zheng/sample_OK.xlsx')
 # read_excel('/media/wly/My Passport/youyi zheng/sample.xlsx')
 # merge_excel('/media/wly/My Passport/youyi zheng/all.txt',
