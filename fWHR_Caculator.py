@@ -4,11 +4,8 @@ from matplotlib.pyplot import imshow
 from PIL import Image, ImageDraw
 import pylab
 import urllib.request
-from os import listdir
-from concurrent.futures import ThreadPoolExecutor
 
 import face_recognition
-from face_test import find_faces, find_faces_cnn
 
 
 def load_image(path, url=False, imagename='tmp'):
@@ -46,8 +43,8 @@ def get_face_points(points, method='average', top='eyebrow'):
         coords = (width_left[0], width_right[0], top_right[1], bottom_right[1])
 
     else:
-        top_average = (top_left[1] + top_right[1]) / 2
-        bottom_average = (bottom_left[1] + bottom_right[1]) / 2
+        top_average = (top_left[1] + top_right[1]) / 2.0
+        bottom_average = (bottom_left[1] + bottom_right[1]) / 2.0
         coords = (width_left[0], width_right[0], top_average, bottom_average)
 
     ## Move the line just a little above the top of the eye to the eyelid
@@ -111,25 +108,6 @@ def show_box(image, corners):
     pylab.show()
 
 
-def save_box(image_path, image, corners):
-    pil_image = Image.fromarray(image)
-    w, h = pil_image.size
-
-    ## Automatically determine width of the line depending on size of picture
-    line_width = math.ceil(h / 100)
-
-    d = ImageDraw.Draw(pil_image)
-    d.line([corners['bottom_left'], corners['top_left']], width=line_width)
-    d.line([corners['bottom_left'], corners['bottom_right']], width=line_width)
-    d.line([corners['top_left'], corners['top_right']], width=line_width)
-    d.line([corners['top_right'], corners['bottom_right']], width=line_width)
-
-    if image_path.endswith('.jpg'):
-        pil_image.save(image_path[:-4] + '_box.jpg')
-    else:
-        pil_image.save(image_path + '_box.jpg')
-
-
 def get_fwhr(image_path, url=False, show=True, method='average', top='eyelid', imagename='tmp'):
     image = load_image(image_path, url, imagename=imagename)
     landmarks = face_recognition.api._raw_face_landmarks(image)
@@ -152,62 +130,5 @@ def get_fwhr(image_path, url=False, show=True, method='average', top='eyelid', i
         return None
 
 
-def save_fwhr(image_path, index, method='average', top='eyelid'):
-    print(index)
-    image = face_recognition.load_image_file('box/' + image_path)
-    landmarks = face_recognition.api._raw_face_landmarks(image)
-    landmarks_as_tuples = [(p.x, p.y) for p in landmarks[0].parts()]
-
-    if good_picture_check(landmarks_as_tuples):
-        corners = get_face_points(landmarks_as_tuples, method=method, top=top)
-        save_box('box/' + image_path, image, corners)
-    else:
-        print("Picture is not suitable to calculate fwhr.")
-
-
-def save():
-    filepath = '/home/wly/python_item/fWHR/image'
-    imagename_list = listdir(filepath)
-
-    with ThreadPoolExecutor(8) as executor:
-        for r in range(len(imagename_list)):
-            if imagename_list[r].endswith('gen.jpg'):
-                continue
-            executor.submit(save_fwhr, imagename_list[r], r)
-
-
-def save_face():
-    filepath = '/home/wly/python_item/fWHR/box'
-    imagename_list = listdir(filepath)
-
-    for imagename in imagename_list:
-        if not imagename.endswith('_cnn.jpg'):
-            continue
-        try:
-            save_fwhr(imagename, 0)
-        except BaseException as e:
-            print(imagename)
-            print(e)
-
-
-def gen_face_cnn():
-    imagefilepath = '/home/wly/python_item/fWHR/image/'
-    filepath = '/home/wly/python_item/fWHR/box/'
-    imagename_list = listdir(filepath)
-
-    for imagename in imagename_list:
-        if imagename.endswith('gen.jpg'):
-            continue
-        image_path = imagename[:-4]
-        find_faces_cnn(imagefilepath + image_path, filepath + image_path + '_cnn.jpg')
-
-def caculator_all():
-    filepath = ''
-
 if __name__ == '__main__':
-    # image_url = 'http://person.sac.net.cn/photo/images/20080102/registrationRpInfo/136386186695846063.jpg'
     get_fwhr('test', url=False)
-    #     get_fwhr(obama_url, url=True, top = 'eyebrow')
-    # print(get_fwhr(image_url, url=True, show=False, imagename='tmp'))
-    # gen_face_cnn()
-    # save_face()
