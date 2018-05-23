@@ -25,19 +25,17 @@ def generateIP():
     return ip
 
 
-def equal_company(a, b):
-    names = ['有限责任公司', '股份有限公司', '有限公司']
-    real_a = a
-    if real_a.endswith(names[0]) or real_a.endswith(names[1]):
-        real_a = a[:-6]
-    elif real_a.endswith(names[2]):
-        real_a = a[:-4]
+def get_realname(name):
+    posts = ['证券集团', '证券有限责任公司', '证券股份有限公司', '证券有限公司', '集团股份有限公司', '有限责任公司', '股份有限公司', '有限公司']
+    for post in posts:
+        if name.endswith(post):
+            return name[:-len(post)]
+    return name
 
-    real_b = b
-    if real_b.endswith(names[0]) or real_b.endswith(names[1]):
-        real_b = b[:-6]
-    elif real_b.endswith(names[2]):
-        real_b = b[:-4]
+
+def equal_company(a, b):
+    real_a = get_realname(a)
+    real_b = get_realname(b)
 
     return real_a == real_b
 
@@ -139,4 +137,4 @@ def getImagePath(personID):
 
 
 if __name__ == '__main__':
-    print(equal_company('我你他有限责任公司', '我你他有限公司'))
+    print(equal_company('我你他证券股份有限公司', '我你他有限公司'))

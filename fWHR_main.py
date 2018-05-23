@@ -10,7 +10,7 @@ def calculate(w_sheet, r_sheet, r, image_map):
     for index in range(3):
         w_sheet.cell(row=r + 1, column=index + 1).value = r_sheet.cell(row=r + 1, column=index + 1).value
 
-    compony = r_sheet.cell(row=r + 1, column=1).value
+    compony = r_sheet.cell(row=r + 1, column=2).value
     name = r_sheet.cell(row=r + 1, column=3).value
     # ratio = r_sheet.cell(row=r + 1, column=10).value
 
@@ -169,4 +169,4 @@ def upate_excel(filename):
 
 
 if __name__ == '__main__':
-    upate_excel('sample_20180423.xlsx')
+    upate_excel('sample_20180523.xlsx')
