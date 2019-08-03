@@ -26,7 +26,11 @@ def generateIP():
 
 
 def get_realname(name):
-    posts = ['证券集团', '证券有限责任公司', '证券股份有限公司', '证券有限公司', '集团股份有限公司', '有限责任公司', '股份有限公司', '有限公司']
+    posts = ['证券经纪有限责任公司', '投资证券有限责任公司', '证券投资咨询有限公司', '证券集团',
+             '证券研究所有限责任公司', '投资顾问有限公司',
+             '证券有限责任公司', '证券股份有限公司', '证券有限公司',
+             '集团股份有限公司', '投资咨询有限公司', '证券(香港)有限公司',
+             '有限责任公司', '股份有限公司', '有限公司', '证券公司', '证券']
     for post in posts:
         if name.endswith(post):
             return name[:-len(post)]
@@ -97,6 +101,7 @@ def search(company, name):
                 person_id = getPersonID(person['PPP_ID'])
                 if is_person(person_id, company):
                     result = person
+                    result['personID'] = person_id
                     break
 
     return result

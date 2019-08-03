@@ -74,6 +74,57 @@ def calculate(w_sheet, r_sheet, r, image_map):
         print(imagePath)
 
 
+def calculate_simple(w_sheet, r_sheet, r):
+    for index in range(3):
+        w_sheet.cell(row=r + 1, column=index + 1).value = r_sheet.cell(row=r + 1, column=index + 1).value
+
+    compony = r_sheet.cell(row=r + 1, column=3).value
+    name = r_sheet.cell(row=r + 1, column=2).value
+    ratio = r_sheet.cell(row=r + 1, column=6).value
+
+    if ratio:
+        return
+    if not compony or not name:
+        return
+
+    result = {}
+    imagePath = ''
+    try:
+        result = spider.search(compony, name)
+        if not result:
+            return
+        w_sheet.cell(row=r + 1, column=4).value = result['SCO_NAME']
+        w_sheet.cell(row=r + 1, column=5).value = result['ECO_NAME']
+
+        personID = result['personID']
+        if not personID:
+            return
+        imagePath = spider.getImagePath(personID)
+        if not imagePath:
+            return
+    except BaseException as e:
+        print(e)
+        if str(e) == 'string indices must be integers':
+            print("sleep")
+            return
+
+    if not result or not imagePath:
+        return
+
+    imagename = compony + '_' + name + '_' + result['SCO_NAME'] + '_' + result['CER_NUM'] \
+                + '_' + result['PTI_NAME'] + '_' + result['ECO_NAME'] + '_' + \
+                result['PPP_GET_DATE'] + '_' + result['PPP_END_DATE']
+    try:
+        ratio = get_fwhr(imagePath, url=True, show=False, imagename=imagename)
+        if ratio:
+            w_sheet.cell(row=r + 1, column=6).value = ratio
+            print('ok')
+    except BaseException as exct:
+        print(exct)
+        print(result)
+        print(imagePath)
+
+
 def merge_excel(filename1, filename2):
     r_book1 = openpyxl.load_workbook(filename1)
     r_sheet1 = r_book1['Sheet1']
@@ -168,5 +219,27 @@ def upate_excel(filename):
     w_book.save(filename[:-5] + '_out.xlsx')
 
 
+def udpate_simple(filename):
+    r_book = openpyxl.load_workbook(filename)
+    r_sheet = r_book['Sheet1']
+    rows = r_sheet.max_row
+
+    w_book = openpyxl.Workbook()  # 创建excel对象
+    w_sheet = w_book.create_sheet(title='Sheet1')
+    w_sheet.cell(row=1, column=1).value = 'brokercd'
+    w_sheet.cell(row=1, column=2).value = 'ananm'
+    w_sheet.cell(row=1, column=3).value = 'brokern'
+    w_sheet.cell(row=1, column=4).value = '性别'
+    w_sheet.cell(row=1, column=5).value = '学历'
+    w_sheet.cell(row=1, column=6).value = 'var12'
+
+    for r in range(rows):
+        if r == 0:
+            continue
+        calculate_simple(w_sheet, r_sheet, r)
+
+    w_book.save(filename[:-5] + '_out.xlsx')
+
+
 if __name__ == '__main__':
-    upate_excel('sample_20180523.xlsx')
+    udpate_simple('wang_out.xlsx')
