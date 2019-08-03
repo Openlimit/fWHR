@@ -1,5 +1,5 @@
 import math
-
+import os
 from matplotlib.pyplot import imshow
 from PIL import Image, ImageDraw
 import pylab
@@ -9,11 +9,15 @@ import face_recognition
 
 
 def load_image(path, url=False, imagename='tmp'):
+    imagedir = 'image'
+    if not os.path.exists(imagedir):
+        os.mkdir(imagedir)
+
     if not url:
         return face_recognition.load_image_file(path)
     else:
         if path[-3:] == 'jpg' or path[-3:] == 'peg' or path[-3:] == 'png' or path[-3:] == 'JPG':
-            image_path = 'image/' + imagename
+            image_path = '{}/{}.{}'.format(imagedir, imagename, path[-3:])
             urllib.request.urlretrieve(path, image_path)
             return face_recognition.load_image_file(image_path)
         else:

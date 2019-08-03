@@ -1,8 +1,8 @@
 import urllib3
 import random
 
-url_path = 'http://person.sac.net.cn/pages/registration/train-line-register!gsUDDIsearch.action'
-image_head = 'http://person.sac.net.cn/photo/images/'
+url_path = 'http://exam.sac.net.cn/pages/registration/train-line-register!gsUDDIsearch.action'
+image_head = 'http://exam.sac.net.cn/photo/images/'
 header = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36',
     'X-Forwarded-For': '114.248.238.236'

@@ -75,6 +75,7 @@ def calculate(w_sheet, r_sheet, r, image_map):
 
 
 def calculate_simple(w_sheet, r_sheet, r):
+    print(r)
     for index in range(3):
         w_sheet.cell(row=r + 1, column=index + 1).value = r_sheet.cell(row=r + 1, column=index + 1).value
 
@@ -83,6 +84,7 @@ def calculate_simple(w_sheet, r_sheet, r):
     ratio = r_sheet.cell(row=r + 1, column=6).value
 
     if ratio:
+        print('pass')
         return
     if not compony or not name:
         return
@@ -118,7 +120,7 @@ def calculate_simple(w_sheet, r_sheet, r):
         ratio = get_fwhr(imagePath, url=True, show=False, imagename=imagename)
         if ratio:
             w_sheet.cell(row=r + 1, column=6).value = ratio
-            print('ok')
+            print('ok: {}'.format(ratio))
     except BaseException as exct:
         print(exct)
         print(result)
@@ -233,10 +235,11 @@ def udpate_simple(filename):
     w_sheet.cell(row=1, column=5).value = '学历'
     w_sheet.cell(row=1, column=6).value = 'var12'
 
-    for r in range(rows):
-        if r == 0:
-            continue
-        calculate_simple(w_sheet, r_sheet, r)
+    with ThreadPoolExecutor(8) as executor:
+        for r in range(rows):
+            if r == 0:
+                continue
+            executor.submit(calculate_simple, w_sheet, r_sheet, r)
 
     w_book.save(filename[:-5] + '_out.xlsx')
 
